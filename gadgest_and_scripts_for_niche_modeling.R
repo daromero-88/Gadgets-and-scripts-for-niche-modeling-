@@ -836,7 +836,40 @@ writeRaster(svm_geo, filename = 'hypervolum_svm', format = 'ascii',
 #' is inside the KUENM folder... so better to rearrange
 #' 
 
+
+setwd ('/Users/daniel/Documents/GitHub/Gadgets-and-scripts-for-niche-modeling-/')
+
+#Continuous models: 
+ne_mod = raster ('./eval_diff_models/sp1_se_asia_median_default.asc')
+enmeval_sel = raster ('./eval_diff_models/enmeval_cont.asc')
+max_default = raster ('./eval_diff_models/sp1_se_asia_median_original.asc')
+
+
+#using binary models: 
+#KUENM selected parameters
+ne_th1 = raster ('./eval_diff_models/ne_th5.asc')
+
+#KUENM default
+default_th = raster ('./eval_diff_models/default_th5.asc')
+
+#ENMeval selected
+enmeval_bin = raster ('./eval_diff_models/enmeval_bin.asc')
+
+#Hypervolume MTP 
+svm_geo = raster ('./eval_diff_models/hypervolum_svm.asc')
+
+
+plot (enmeval_sel)
+plot (max_default)
+plot (ne_mod)
+
+plot (ne_th1)
+plot (default_th)
+plot (enmeval_bin)
+plot (svm_geo)
+
 #MANUAL EVALUATIONS - PARTIAL ROC----------------------------------------------------
+
 
 #material for this section: 
 #independent occurrences for evaluation 
@@ -991,6 +1024,10 @@ fin_eval <- kuenm_feval(path = mod_dir, occ.joint = occ_joint, occ.ind = occ_ind
 
 
 #EVALUATION FRONTIERS --> NULL MODEL------------------------------------------------
+
+#Paper depicting this method: 
+#https://onlinelibrary.wiley.com/doi/abs/10.1111/jbi.13573
+
 #example with default svm_hypervolume model: 
 
 #independent points: 
@@ -1064,9 +1101,9 @@ write.csv (or_null, 'or_null.csv', row.names = F)
 
 #EVALUATION FRONTIERS --> HYPERTEST------------------------------------------------
 
-#
-
-
+#Paper discussing this method: 
+#https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.13479
+#Jimenez and Soberón, et al 2020. 
 
 
 #TRANSMISSION RISK---------------------------------------------------------------
