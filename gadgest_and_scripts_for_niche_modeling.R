@@ -143,6 +143,13 @@ writeRaster(sa2, filename = names (sa2), format = 'ascii',
 #' A step by step super detailed tutorial: http://borisleroy.com/files/virtualspecies-tutorial.html
 
 
+#If not aware of how to implement this portion:
+#READ THE CODE UNTIL THE BEGINING OF CALIBRATION AREAS
+#READ THE CODE UNTIL THE BEGINING OF CALIBRATION AREAS
+#READ THE CODE UNTIL THE BEGINING OF CALIBRATION AREAS
+#READ THE CODE UNTIL THE BEGINING OF CALIBRATION AREAS
+
+
 #1. Define environmental suitability function
 
 #Calculate descriptive statistics from the environmental variables if needed: 
@@ -393,8 +400,15 @@ dist = mean(pointDistance(occ_sp, cnt, longlat = T)) #obtaining the mean across 
 
 buff2 = buffer(occ_sp, width = dist, dissolve = T) #create the buffer
 
+df = data.frame (matrix(nrow = 1, ncol = 1, 1)) #fake dataframe to convert the spatial polygon to a spatial polygon dataframe...only this way can be written... 
+buff2 = SpatialPolygonsDataFrame(buff2, df, match.ID = F) #transforming in correct object
+
 plot (buff2, add= T, border = 'red')
 points (cnt, pch = 16, cex = 2)
+
+
+writeOGR(buff2, layer= 'buff2',  
+         dsn = './BUFF2', driver = 'ESRI Shapefile')
 
 
 #FRONTIERS--------------------------------------
@@ -411,6 +425,70 @@ wc1
 
 #shape file representing study area 
 buff2
+
+#READING RASTERS IN A BACTH (STACK) AND CLIPPING USING A MASK----------------------
+
+#Establish your own working directory, where you have all your data: 
+#' all the data means: 
+#' - folder with all your rasters
+#' - folder with the shapefile, REMEMBER: shapefiles use different files and they have to be all together 
+
+setwd ('/Users/daniel/Documents/CURSO_INDIA/Divakar1/')
+
+#you can test that you are in the correct folder using the get working directory function: 
+getwd()
+
+#read all the rasters you want to RESAMPLE as a STACK, so you can work as a batch: 
+#NOTICE: './z' = represent the subfolder where all the raster files are located 
+modisd = stack (list.files(path = './z',full.names = T))
+
+#Manually select the shape file you will use to clip (crop/mask) your files
+cliping_lay1 = readOGR (file.choose()) #select the .shp file, it has to have the rest of the corresponding shape files around (i.e., .dbf, .prj)
+
+#cropping/masking: 
+crop_files = crop (modisd, cliping_lay1) #cropping = match the extend of the shape file 
+mask_files = mask (crop_files, cliping_lay1) #masking = match the contour of the shape file 
+
+#Write your rasters as an .ascii file:  
+writeRaster(mask_files, filename = 'masked1', format = 'ascii', 
+            bylayer = T, suffix = names (mask_files), overwrite = T,
+            NAflag = -9999)
+
+
+#RESAMPLING FOR OBTAINING THE SAME PIXEL SIZE AND EXTENT--------------------------
+
+#Establish your own working directory, where you have all your data: 
+#' all the data means: 
+#' - folder with all your rasters
+#' - folder with the raster that is going to be use as a base layer
+
+setwd ('/Users/daniel/Documents/CURSO_INDIA/Divakar1/')
+
+#you can test that you are in the correct folder using the get working directory function: 
+getwd()
+
+#read all the rasters you want to RESAMPLE as a STACK, so you can work as a bacth: 
+modisd = stack (list.files(path = './z',full.names = T))
+
+#Manually select the raster file that you want to use as the transformation raster
+#this one will have the pixel size and the extent that you are interested to obtain: 
+base_layer = raster (file.choose())
+
+
+#Use the RESAMPLE approach to obtain the appropriate: 
+results1 = resample (modisd, base_layer, method = 'bilinear')
+
+#Visualize your results: 
+dev.new()
+plot (results1[[1]])
+dev.new()
+plot (base_layer)
+
+#Write your rasters as an .ascii file:  
+writeRaster(results1, filename = 'modis1', format = 'ascii', 
+            bylayer = T, suffix = names (results1), overwrite = T,
+            NAflag = -9999)
+
 
 #CORRELATION MATRIX------------------------------------
 
@@ -480,6 +558,7 @@ pc_res1 = read.table ('./PCA_vs/Initial/pca_results.txt', header = T, sep = '\t'
 
 #dev.new()
 plot (pca_vs)
+
 
 #VARIABLE COMBINATIONS--------------------------------
 
