@@ -15,6 +15,9 @@ install.packages('mapdata')
 install.packages ('dismo')
 install.packages('spThin')
 install.packages ('ENMeval')
+install.packages ('plyr')
+install.packages ('rgbif')
+
 
 if(!require(kuenm)){
   devtools::install_github("marlonecobos/kuenm")
@@ -39,12 +42,87 @@ library (gatepoints) #for advance functions
 library (rgl)
 library (Rcpp)
 library (hypervolume) #hypervolume based models 
+library (rgbif) #download data from GBIF
+library (plyr)
+
 
 #GREAT RESOURCES----------------------
 #MYBLOG
 
 #WORKING DIRECTORY--------------------
 setwd ('/Users/daniel/Documents/GitHub/Gadgets-and-scripts-for-niche-modeling-')
+
+
+#DOWNLOADING OCCURRENCE DATA FROM GBIF---------------------
+
+#establishing a working directory: 
+setwd('/Users/daniel/Documents/LEPROSY/armadillo1') #defining the directory
+dir.create('species2') #creating new folder
+
+
+#Getting the data: 
+
+#default, all fields (columns)
+spp1 = occ_search(scientificName = 'Euphractus sexcinctus')
+#download all the fields associated with the scientific name
+
+View (spp1$data) #visualization of the dataframe
+dim(spp1$data) #number of occurrences recovered (default maximum = 500
+colnames(spp1$data) #checking all the fields of the dataframe
+
+#tuned, selected fields (columns)
+#fixing limit of occs
+spp2 = occ_search(scientificName = 'Euphractus sexcinctus', 
+                  fields = c('name', 'scientificName', 'decimalLongitude', 
+                             'decimalLatitude', 'country', 'stateProvince', 
+                             'locality', 'year',  
+                             limit = 5000))
+#download only the specific fields requested
+#need to apply fix(occ_search) in the console to increase the limit of occurrence
+#recovery... 
+
+View (spp2$data) #visualization of the dataframe 
+dim(spp2$data) #number of occurrences recovered = 765
+
+#Cleaning GBIF data: 
+
+#Do I have NA's in the coordinates? 
+spp3 = data.frame (spp2$data)
+class(spp3)
+dim(spp3)
+
+spp3 = spp3[which(!is.na(spp2$data$decimalLongitude)),]
+dim(spp3)
+
+#Eliminate duplicates! 
+spp3$dup = paste(spp3$decimalLongitude, spp3$decimalLatitude, sep = '_')
+spp3 = spp3[!duplicated(spp3$dup),]
+dim(spp3)
+spp3$dup = NULL
+
+#Eliminate occ's by year? 
+unique (spp3$year) #range of years of collection
+spp3 = spp3[which(spp3$year>1980),]
+dim(spp3)
+
+#Eliminate weird longitude and latitude values (e.g., Isolations in other continent)
+#waiting for development 
+
+#Check points inside rasters
+#waiting for development 
+
+
+#writing table: 
+write.csv (spp3, file = './species2/species2_cleaned.csv', row.names = F) 
+
+
+#Looking the data really quick: 
+data("wrld_simpl", package = "maptools")
+plot (wrld_simpl)
+WGS84 = crs(wrld_simpl) # geographic projection
+
+points (spp3$decimalLongitude, spp3$decimalLatitude, pch = 16, col = 'red')
+
 
 
 #MANIPULATING SHAPES-------------------
