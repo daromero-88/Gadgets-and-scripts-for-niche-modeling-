@@ -15,7 +15,7 @@ You also need to open and read the information of other available scripts found 
 - Functions for other manipulations of the environmental space can be found here: https://github.com/daromero-88/Environmental-sampling
 
 Virtual species were not discussed in this course but allowed me to create dummy data to manipulate and implement the tools presented here. I used Leroy et al 2016 'virtualspecies' R package, crucial information to play with virtual species can be found via: 
-- A ecent review on the topic: https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.04385 
+- A recent review on the topic: https://onlinelibrary.wiley.com/doi/full/10.1111/ecog.04385 
 - The original manuscript presenting the package: https://borea.mnhn.fr/en/virtualspecies-r-package-generate-virtual-species-distributions
 - A step by step super detailed tutorial for using the package: http://borisleroy.com/files/virtualspecies-tutorial.html
 
