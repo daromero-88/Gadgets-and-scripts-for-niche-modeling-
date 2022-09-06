@@ -638,6 +638,38 @@ pc_res1 = read.table ('./PCA_vs/Initial/pca_results.txt', header = T, sep = '\t'
 plot (pca_vs)
 
 
+#WEIRD LINES IN PCA-----------------------------------
+
+#ONLY APPLY IF NECCESARY: 
+
+#' this weird lines appear because the variables in the stack  are super
+#' different and they have NAs in different places, e.g., temperature and soil
+#' In order to fix this problem we need to: 
+#' create a raster layer with the NAs in each variable that will homogenize
+#' the information across the predictors. This approach was shared by Marlon Cobos
+#' and in his more effective form you have to proceed as: 
+
+#creating an homogenization mask: 
+ot1 = calc(all1, sum) #summing each row of the stack 
+
+#masking the original stack with the homogenization mask
+test1 = mask (all1, ot1)
+
+#applying the PCA again: 
+out_folder <- "PCA_4" #name of the outside folder 
+n_pcs <- 5 # number of pcs you want as rasters, if not defined all pcs are returned as rasters
+
+kuenm_rpca(test1, var.scale = TRUE, write.result = T, project = F,
+           proj.vars = proj_folder, n.pcs = n_pcs, in.format = 'ascii', out.format = 'ascii', 
+           out.dir = out_folder)
+
+#read PCs 
+pca_vs2= stack(list.files('./PCA_4/Initial', full.names = T, pattern = 'asc'))
+
+#table 
+pc_res2 = read.table ('./PCA_4/Initial/pca_results.txt', header = T, sep = '\t')
+
+
 #VARIABLE COMBINATIONS--------------------------------
 
 var.dir = './var_unc/'
