@@ -9,9 +9,9 @@
   --------------------------------------------------------
   
   ####DETAILS#####
-#' The function upgrade the 
-#' 
-#' 
+#' Make sure that both rasters are at the same pixel resolution
+#' You need to define the projection of the output in the function, usually with 
+#' the crs argument for rasters, e.g.: crs (RASTER). 
 
 
 ####PACKAGES#####
