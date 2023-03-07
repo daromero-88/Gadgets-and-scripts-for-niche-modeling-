@@ -428,7 +428,7 @@ plot (occ_sp)
 
 #RANDOM EXTENT-------------------------------------------
 plot(sa1)
-plot (occ_sp, add = T, pch = 3, cex = 0.6, col = 'red')
+plot (occ_sp, add = T, pch = 3, cex = 0.6, col = 'red') #SPATIAL POINT DATAFRAME object, this is the only way the buffers will work see: CALIBRATION AREAS
 e = drawExtent()
 
 cp = as(extent(e), 'SpatialPolygons')
@@ -464,7 +464,7 @@ plot (mask2)
 dd = 500000 #Define the distance buffer in meters because it has a WGS84 projection! 
 
 #the buffer itself: 
-buff1 = buffer(occ_sp, width = dd, dissolve = T) 
+buff1 = buffer(occ_sp, width = dd, dissolve = T) #SPATIAL POINT DATAFRAME object, this is the only way the buffers will work see: CALIBRATION AREAS
 
 #visualization: 
 plot (sa1)
@@ -476,7 +476,7 @@ plot (buff1, add = T, border = 'red')
 cnt = data.frame(mean(occ_sp$x),mean(occ_sp$y)) #obtaining the centroid of points 
 dist = mean(pointDistance(occ_sp, cnt, longlat = T)) #obtaining the mean across the distances of all occurrences to the centroid
 
-buff2 = buffer(occ_sp, width = dist, dissolve = T) #create the buffer
+buff2 = buffer(occ_sp, width = dist, dissolve = T) ##SPATIAL POINT DATAFRAME object, this is the only way the buffers will work see: CALIBRATION AREAS
 
 df = data.frame (matrix(nrow = 1, ncol = 1, 1)) #fake dataframe to convert the spatial polygon to a spatial polygon dataframe...only this way can be written... 
 buff2 = SpatialPolygonsDataFrame(buff2, df, match.ID = F) #transforming in correct object
