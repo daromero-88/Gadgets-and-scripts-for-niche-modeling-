@@ -72,13 +72,12 @@ colnames(spp1$data) #checking all the fields of the dataframe
 
 #tuned, selected fields (columns)
 #fixing limit of occs
-spp2 = occ_search(scientificName = 'Euphractus sexcinctus', 
+spp2 = occ_search(scientificName = 'Euphractus sexcinctus', limit = 5000, #the parameter limit should be outside of field to work 
                   fields = c('name', 'scientificName', 'decimalLongitude', 
                              'decimalLatitude', 'country', 'stateProvince', 
-                             'locality', 'year',  
-                             limit = 5000))
+                             'locality', 'year'))
 #download only the specific fields requested
-#need to apply fix(occ_search) in the console to increase the limit of occurrence
+#need to apply fix(occ_search) in the console to increase the limit of occurrence: AS FOR 05/04/2023 this is no longer needed it is fixed taking limit argument from the fields list. 
 #recovery... 
 
 View (spp2$data) #visualization of the dataframe 
